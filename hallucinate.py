@@ -29,7 +29,7 @@ from diffusion.lib.ccprojection import CCProjection
 
 # Will error if the minimal version of diffusers is not installed. Remove at your own risks.
 check_min_version("0.20.0")
-UV_TEMPLATE = 'data/smplx_uv.obj'
+UV_TEMPLATE = './deps/SiTH/data/smplx_uv.obj'
 
 def tensor_to_np(image):
     image = (image / 2 + 0.5).clamp(0, 1)

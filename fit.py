@@ -21,9 +21,9 @@ from fitting.utils.conversion import rotation_matrix_to_angle_axis, batch_rodrig
 from fitting.utils.kps import draw_openpose_keypoints, load_openpose_json, vis_meshes
 
 # Define the data paths
-CKPT_PATH = 'checkpoints/save_smplerx.pth'
-SMPL_PATH = 'data/body_models'
-JOINT_MAP = 'data/smplx_openpose25.json'
+CKPT_PATH = './deps/SiTH/checkpoints/save_smplerx.pth'
+SMPL_PATH = './deps/SiTH/data/body_models'
+JOINT_MAP = './deps/SiTH/data/smplx_openpose25.json'
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 mapper = json.load(open(JOINT_MAP))['smplx_idxs']

@@ -17,8 +17,8 @@ from recon.datasets.test_dataset import TestFolderDataset
 from recon.ops.mesh.load_obj import load_obj
 
 ####################################################
-CANONICAL_TEMPLATE = 'data/smplx_canonical.obj'
-WATERTIGHT_TEMPLATE = 'data/smplx_watertight.pkl'
+CANONICAL_TEMPLATE = './deps/SiTH/data/smplx_canonical.obj'
+WATERTIGHT_TEMPLATE = './deps/SiTH/data/smplx_watertight.pkl'
 ####################################################
 
 def main(config):
