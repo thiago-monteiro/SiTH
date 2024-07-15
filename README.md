@@ -1,8 +1,10 @@
-# SiTH: Single-view Textured Human Reconstruction with Image-Conditioned Diffusion
+<p align="center"> <img src="https://files.ait.ethz.ch/projects/SiTH/sith.png" width=400/> </p>
 
-## [Project Page](https://ait.ethz.ch/sith) | [Paper](https://arxiv.org/abs/2311.15855) | [Youtube(6min)](https://www.youtube.com/watch?v=gixakzI9UcM)  | [Online Demo](https://ait.ethz.ch/sith-demo)
+# <p align="center"> Single-view Textured Human Reconstruction with Image-Conditioned Diffusion </p>
 
-<img src="assets/teaser.gif" width="800"/> 
+## [Project Page](https://ait.ethz.ch/sith) | [Paper](https://arxiv.org/abs/2311.15855) | [Youtube(6min)](https://www.youtube.com/watch?v=gixakzI9UcM), [Shorts(15sec)](https://youtube.com/shorts/U5sL3zcSBK8?si=TRPosNAbqZz_oqjQ) | [Online Demo](https://ait.ethz.ch/sith-demo)
+
+<img src="assets/teaser.gif"/> 
 
 **Official code release for CVPR 2024 paper [SiTH](https://ait.ethz.ch/sith)**.
 
@@ -12,7 +14,7 @@ What you can find in this repo:
 * A minimal script for fitting the SMPL-X model to an image.
 * A new evaluation benchmark for single-view 3D human reconstruction.
 * A Gradio demo for creating 3D humans with poses and text prompts.
-- [ ] [TODO] Training scripts for the diffusion model and the mesh reconstruction model.
+* Training scripts for the diffusion model and the mesh reconstruction model.
 
 If you find our code and paper useful, please cite it as
 ```
@@ -25,14 +27,14 @@ If you find our code and paper useful, please cite it as
 ```
 
 ## News
-
+* [June 14, 2024] Release the training code for the diffusion model and the mesh reconstruction model.
+* [May 15, 2024] Update an application of 3D avatar animation.
 * [April 24, 2024] Gradio demo for 3D human creation is now available.
 * [April 15, 2024] Release demo code, models, and the evaluation benchmark.
 
 
-
 ## Installation
-Our code has been tested with PyTorch 2.1.0, CUDA 12.1, and an RTX 3090 GPU.
+Our code has been tested with Ubuntu 22.04, PyTorch 2.1.0, CUDA 12.1, and an RTX 3090 GPU.
 
 Simply run the following command to install relevant packages:
 
@@ -65,20 +67,6 @@ body_models
 ```bash
 bash run.sh
 ```
-
-## Gradio Demo
-<img src="assets/sith_demo.gif" width="300"/> 
-
-We create an application combining SiTH and powerful [ControlNet](https://github.com/lllyasviel/ControlNet-v1-1-nightly) for 3D human creation. In the demo, users can easily create 3D humans with several button clicks. 
-
-You can either play our [Online Demo](https://ait.ethz.ch/sith-demo) or launch the web UI locally. To run the demo on your local machine, simply run
-```bash
-python app.py
-```
-You will see the following web UI on [http://127.0.0.1:7860/](http://127.0.0.1:7860/).
-
-<img src="assets/screenshot.png" width="800"/> 
-
 ## SiTH Pipeline
 
 ### Data Preparation
@@ -115,7 +103,14 @@ Note that generative models do have randomness. Therefore multiple images are ge
 * `--guidance_scale`: Classifier-free guidance (CFG) scale.
 * `--conditioning_scale`: ControlNet conditioning scale.
 * `--num_inference_steps`: Denoising steps.
-* `--pretrained_model_name_or_path`: The default model is trained on 500 human scans. We offer a new model trained with 2000+ scans and more view angles. To use the model, please adjust to `hohs/SiTH-diffusion-2000`.
+* `--pretrained_model_name_or_path`: The default model is trained on 500 human scans. We offer several pretrained models below. Note that you also need to adjust the corresponding `--resolution`.
+
+| Link | Training samples | Resolution | Note |
+| :------: | :----:  | :-----: | :----: |
+| [hohs/SiTH_diffusion](https://huggingface.co/hohs/SiTH_diffusion) | 526 | 512 | CVPR paper benchmark. |
+| [hohs/SiTH-diffusion-2000](https://huggingface.co/hohs/SiTH-diffusion-2000) | 2000+ | 512 | Used in the gradio demo. |
+| [hohs/SiTH-diffusion-1K](https://huggingface.co/hohs/SiTH-diffusion-1K) | 4000+ | 1024 | New model to avido up-scaling artifacts. Reduce batch size to save VRAM.|
+
 
 ### Textured Human Reconstruction
 Before reconstructing the 3D meshes, make sure the following folders and images are ready.
@@ -138,51 +133,62 @@ data/examples
 The following command will reconstruct textured meshes under `data/examples/meshes`:
 
 ```
-python reconstruct.py --test-folder data/examples --config recon/config.yaml --resume checkpoints/recon_model.pth
+python reconstruct.py --test_folder data/examples --config recon/config.yaml --resume checkpoints/recon_model.pth
 ```
-The default `--grid-size` for marching cube is set to 512. If your images contain noisy segmentation borders, you can increase `--erode-iter` to shrink your segmentation mask. 
+The default `--grid_size` for marching cube is set to 512. If your images contain noisy segmentation borders, you can increase `--erode_iter` to shrink your segmentation mask. 
 
+
+## Applications
+
+### Texts to 3D Humans
+<img src="assets/sith_demo.gif" width="300"/> 
+
+We create an application combining SiTH and powerful [ControlNet](https://github.com/lllyasviel/ControlNet-v1-1-nightly) for 3D human creation. In the demo, users can easily create 3D humans with several button clicks. 
+
+You can either play our [Online Demo](https://ait.ethz.ch/sith-demo) or launch the web UI locally. To run the demo on your local machine, simply run
+```bash
+python app.py
+```
+You will see the following web UI on [http://127.0.0.1:7860/](http://127.0.0.1:7860/).
+
+https://github.com/SiTH-Diffusion/SiTH/assets/18035210/9ec6660b-cc5c-430a-a90c-470191c875ad
+
+### Animation-ready Avatars
+SiTH can be used for creating animatable 3D avatars from images. You can generate a textured mesh with a UV map by modifying the command at [`run.sh`](https://github.com/SiTH-Diffusion/SiTH/blob/main/run.sh#L16) with
+
+```bash
+python reconstruct.py --test_folder data/examples --config recon/config.yaml --resume checkpoints/recon_model.pth --grid_size 300 --save_uv
+```
+⚠️ You need to install an additional package for UV unwrapping `pip install xatlas`. Note that UV unwrapping takes a long computational time (>10 mins per mesh). Therefore, it should be only used for the avatar animation application.
+
+We fit and repose the reconstructed textured meshes using [Editable-humans](https://github.com/custom-humans/editable-humans).
+Please check their [demo code](https://github.com/custom-humans/editable-humans/blob/main/demo.py) to see how to repose a 3D human mesh.
+
+We also provide several recorded motion sequences with SMPL-X parameters for free. You can download the motion sequences from [here](https://files.ait.ethz.ch/projects/SiTH/motion.zip).
+
+<details><summary>See which dances are included:</summary>
+
+<a href="https://youtu.be/YMxQdHtQFGc" target="_blank">
+ <img src="http://img.youtube.com/vi/YMxQdHtQFGc/mqdefault.jpg" alt="Watch the video" width="600" />
+</a>
+    
+<a href="https://youtu.be/gEezSuPmzpQ" target="_blank">
+ <img src="http://img.youtube.com/vi/gEezSuPmzpQ/mqdefault.jpg" alt="Watch the video" width="600" />
+</a>
+    
+<a href="https://youtu.be/mLW35YMzELE" target="_blank">
+ <img src="http://img.youtube.com/vi/mLW35YMzELE/mqdefault.jpg" alt="Watch the video" width="600" />
+</a>
+    
+</details>
+
+<img src="assets/animation.gif"/> 
+
+## Training Models
+Please see [TRAINING.md](https://github.com/SiTH-Diffusion/SiTH/blob/main/TRAINING.md).
 
 ## Evaluation Benchmark
-
-We created an evaluation benchmark using the [CustomHumans](https://custom-humans.github.io/#download) dataset. Please apply the dataset directly and you will find the necessary files in the download link. 
-
-Note that we trained our models with 526 human scans provided in the [THuman2.0](https://github.com/ytrock/THuman2.0-Dataset) dataset and tested on 60 scans in the [CustomHumans](https://custom-humans.github.io/#download) dataset. We used the default hyperparameters and commands suggested in `run.sh`. The evaluation script can be found [here](https://github.com/SiTH-Diffusion/SiTH/blob/main/tools/evaluate.py) and [here](https://github.com/SiTH-Diffusion/SiTH/blob/main/tools/evaluate_image.py). You will need to install two additional packages for evaluation:
-
-```
-pip install torchmetrics[image] mediapipe
-```
-
-<details><summary>Single-view human 3D reconstruction benchmark</summary>
-<br>
-    
-| Methods | P-to-S (cm) ↓ | S-to-P (cm) ↓ | NC ↑ | f-Score ↑ |
-| ------  | :----:  | :-----: | :----: | :----: |
-| PIFu [[Saito2019]](https://github.com/shunsukesaito/PIFu)   | 2.209 |  2.582  |  0.805  | 34.881 |
-| PIFuHD[[Saito2020]](https://github.com/facebookresearch/pifuhd)  | 2.107 |  <ins>2.228</ins>  |  0.804  | **39.076** |
-| PaMIR [[Zheng2021]](https://github.com/ZhengZerong/PaMIR)  | 2.181 |  2.507 | <ins>0.813</ins> | 35.847 |
-| FOF [[Feng2022]](https://github.com/fengq1a0/FOF)   | <ins>2.079</ins> | 2.644 | 0.808 | 36.013 |
-| 2K2K [[Han2023]](https://github.com/SangHunHan92/2K2K) | 2.488 | 3.292 | 0.796 | 30.186 |
-| ICON* [[Xiu2022]](https://github.com/YuliangXiu/ICON)  | 2.256 | 2.795 |0.791 | 30.437 |
-| ECON* [[Xiu2023]](https://github.com/fengq1a0/FOF)   | 2.483 | 2.680 | 0.797 | 30.894 |
-| SiTH* (Ours) | **1.871** | **2.045** | **0.826** | <ins>37.029</ins> | 
-
-* *indicates methods trained on the same THuman2.0 dataset.
-</details>
-<br>
-<details><summary>Back-view hallucination benchmark</summary>
-<br> 
-
-| Methods | SSIM ↑ | LPIPS↓ | KID(×10^−3^) ↓ | Joints Err. (pixel) ↓ |
-| ------  | :----:  | :-----: | :----: | :----: |
-| Pix2PixHD [[Wang2018]](https://github.com/NVIDIA/pix2pixHD) |  0.816 | 0.141 | 86.2 | 53.1 |
-| DreamPose [[Karras2023]](https://github.com/johannakarras/DreamPose) |  0.844 | 0.132 | 86.7 | 76.7 |
-| Zero-1-to-3 [[Liu2023]](https://github.com/cvlab-columbia/zero123)  | <ins>0.862</ins> | <ins>0.119</ins> | <ins>30.0</ins> | 73.4 |
-| ControlNet [[Zhang2023]](https://github.com/lllyasviel/ControlNet-v1-1-nightly)   | 0.851 | 0.202 | 39.0 | <ins>35.7</ins> |
-| SiTH  (Ours)  | **0.950** | **0.063** | **3.2** | **21.5** |
-
-</details>
-
+Please see [EVALUATE.md](https://github.com/SiTH-Diffusion/SiTH/blob/main/EVALUATE.md).
 
 ## Acknowledgement
 We used code from other great research work, including [occupancy_networks](https://github.com/autonomousvision/occupancy_networks),

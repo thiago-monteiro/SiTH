@@ -24,8 +24,9 @@ from diffusers.utils import check_min_version
 from diffusers.utils.import_utils import is_xformers_available
 
 from diffusion.lib.test_diffusion_dataset import TestDiffDataset
-from diffusion.lib.pipeline import StableDiffusion3DControlNetPipeline
+from diffusion.lib.pipeline import BackHallucinationPipeline
 from diffusion.lib.ccprojection import CCProjection
+from diffusion.lib.utils import tensor_to_np, image_grid
 
 # Will error if the minimal version of diffusers is not installed. Remove at your own risks.
 check_min_version("0.20.0")
@@ -89,7 +90,7 @@ def main(args):
                         num_workers=0,
                         pin_memory=True)
 
-    pipeline = StableDiffusion3DControlNetPipeline(
+    pipeline = BackHallucinationPipeline(
         vae=vae,
         clip_image_encoder=clip_image_encoder,
         unet=unet,

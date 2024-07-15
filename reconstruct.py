@@ -1,5 +1,5 @@
 """
-Copyright (C) 2024  ETH Zurich, Hsuan-I Ho
+Copyright (C) 2023  ETH Zurich, Hsuan-I Ho
 """
 
 import os
@@ -7,6 +7,7 @@ import sys
 import logging as log
 import numpy as np
 import torch
+import time
 import random
 import pickle
 
@@ -14,7 +15,7 @@ from torch.utils.data import DataLoader
 from recon.models.evaluator import Evaluator
 from recon.utils.config import parse_options, argparse_to_str
 from recon.datasets.test_dataset import TestFolderDataset
-from recon.ops.mesh.load_obj import load_obj
+from recon.models.ops.mesh.load_obj import load_obj
 
 ####################################################
 CANONICAL_TEMPLATE = './deps/SiTH/data/smplx_canonical.obj'
@@ -48,13 +49,14 @@ def main(config):
 
     for i, data in enumerate(loader):
         with torch.no_grad():
-            evaluator.test_reconstruction(data, save_path, args.subdivide)
+            evaluator.test_reconstruction(data, save_path, subdivide=args.subdivide, save_uv=args.save_uv)
 
 if __name__ == "__main__":
 
     parser = parse_options()
 
     parser.add_argument('--test-folder', type=str, required=True, help='saving directory')
+    parser.add_argument('--save-uv', action='store_true', help='save texture meshes with uv')
 
     args, args_str = argparse_to_str(parser)
     handlers = [log.StreamHandler(sys.stdout)]
